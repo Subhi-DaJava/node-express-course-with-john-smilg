@@ -1,4 +1,11 @@
 const http = require('http');
+const {readFileSync} = require('fs');
+
+// get all files 
+const homePage = readFileSync('./index.html'); // some how static on init
+
+
+
 const server = http.createServer((req, res) => {
     // console.log(req.method);
     // console.log(req.url);
@@ -6,7 +13,7 @@ const server = http.createServer((req, res) => {
 
     if( url === '/') {
         res.writeHead(200, {'content-type':'text/html'}) // 'content-type':'text/plain'
-        res.write('<h1>Home Page</h1>');
+        res.write(homePage);
         res.end();
         // same as res.end('<h1>Home Page</h1>'); 
     }
