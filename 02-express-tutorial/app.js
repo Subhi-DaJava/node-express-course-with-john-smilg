@@ -1,37 +1,41 @@
-// 07/10/2022 Middleware options, Third Party : $ npm i morgan
+// 07/10/2022 Http Methods: Read the data, modify and delete it 
 
 const express = require('express');
 const app = express();
-const morgan = require('morgan');
-const logger = require('./logger');
-const authorize = require('./authorize');
+let {people} = require('./data');
 
-// req => middleware => res
+// static assets
+app.use(express.static('./methods-public')); // build a middleware,provide a path methods-public, static files, run : http://localhost:5000/index.html
 
-// 1. use vs route
-// 2. options - our own / express / third party
+// add or insert data
+// parse form data
+app.use(express.urlencoded({ extended: false })); // extended is flag, middleware build-in
 
-// app.use(express.static('./public'));
+// Parse Json 
+app.use(express.json());
 
-app.use(morgan('tiny'));
-
-app.get('/', (req, res) => {
-    
-    res.send('Home')
+app.get('/api/people', (req, res) => { // http get method to browser
+    res.status(200).json({success: true, data: people});
+})
+app.post('/api/people', (req, res) => { // javascript
+    const {name} = req.body;
+    if(!name) {
+        return res.status(400).json({success: false, msg: 'Please Provide name value!'});
+    }
+    res.status(201).json({ Success: true, person: name }); 
 })
 
-app.get('/about', (req, res) => {
-    res.send('About')
+// post
+app.post('/login', (req, res) => {
+    //console.log(req.body); // [Object: null prototype] { name: 'Susun' }
+    const {name} = req.body;
+    if(name) {
+        return res.status(200).send(`Welcome ${name}`);
+    }
+    //res.send('POST'); // browser POST, console name: nom
+    res.status(401).send('Please Provide Credentials');
 })
 
-app.get('/api/products', (req, res) => {
-    res.send('Products')
-})
-
-app.get('/api/items', (req, res) => { // only for this request, middleware function
-    console.log(req.user);
-    res.send('Items')
-})
 
 
 app.listen(5000, () => {
