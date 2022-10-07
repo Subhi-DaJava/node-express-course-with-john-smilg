@@ -1,19 +1,19 @@
-// 07/10/2022 Middleware options, Third Party : $ npm i morgan
+// 06/10/2022 Middleware
 
 const express = require('express');
 const app = express();
-const morgan = require('morgan');
 const logger = require('./logger');
 const authorize = require('./authorize');
 
 // req => middleware => res
 
-// 1. use vs route
+// 1.use vs root
 // 2. options - our own / express / third party
 
-// app.use(express.static('./public'));
 
-app.use(morgan('tiny'));
+// app.use([ logger, authorize]);
+// app.use(logger);
+// app.use('/api',logger); // only for api
 
 app.get('/', (req, res) => {
     
@@ -28,7 +28,7 @@ app.get('/api/products', (req, res) => {
     res.send('Products')
 })
 
-app.get('/api/items', (req, res) => { // only for this request, middleware function
+app.get('/api/items', [logger, authorize], (req, res) => { // only for this request, middleware function
     console.log(req.user);
     res.send('Items')
 })
@@ -37,4 +37,3 @@ app.get('/api/items', (req, res) => { // only for this request, middleware funct
 app.listen(5000, () => {
     console.log('Server is listening on port 5000...');
 });
-
