@@ -1,56 +1,27 @@
 const express = require('express');
 const router = express.Router();
 
-let {people} = require('../data'); // two levels up
+const {
+    getPeople,
+    createPerson, 
+    createPersonPostman,
+    updatePerson,
+    deletePerson
+} = require('../controllers/people') // two leveles up
 
-
-router.get('/', (req, res) => { // http get method to browser
-    res.status(200).json({success: true, data: people});
-})
-router.post('/', (req, res) => { // javascript
-    const {name} = req.body;
-    if(!name) {
-        return res.status(400).json({success: false, msg: 'Please Provide name value!'});
-    }
-    res.status(201).json({ Success: true, person: name }); 
-})
-
-router.post('/postman', (req, res) => {
-    const { name } = req.body;
-    if(!name) {
-        return res.status(400).json({success: false, msg: 'Please Provide name value!'});
-    }
-    res.status(201).json({ Success: true, data: [...people, name] }); 
-
-})
-
+// router.get('/', getPeople);
+// router.post('/', createPerson);
+// router.post('/postman', createPersonPostman);
 // put methode 
-router.put('/:id',(req, res) => {
-    const { id } = req.params;
-    const { name } = req.body;
-    // res.send('Hello Postman!')
-    const person = people.find((person) => person.id === Number(id));
-    if(!person) {
-        return res.status(400).json({success: false, msg: `No Person With id ${id}`});
-    }
-    const newPoeple = people.map((person) => {
-        if(person.id === Number(id)) {
-            person.name = name;
-        }
-        return person;
-    });
-    res.status(200).json({ Success: true, data: newPoeple }); 
-});
-
+// router.put('/:id', updatePerson);
 // delete methode 
-router.delete('/:id', (req, res) => {
-    const person = people.find((person) => person.id === Number(req.params.id));
-    if(!person) {
-        return res.status(404).json( {success: false, msg: `No Person With id ${req.params.id}` });
-    }
-    const newPoeple = people.filter((person) => person.id !== Number(req.params.id));
-    return res.status(200).json({ success: true, data: newPoeple });
-});
+// router.delete('/:id', deletePerson);
+
+// another way to set up the router
+
+router.route('/').get(getPeople).post(createPerson);
+router.route('/postman').post(createPersonPostman);
+router.route('/:id').put(updatePerson).delete(deletePerson);
 
 
 module.exports = router;
